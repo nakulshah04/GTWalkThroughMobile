@@ -1,0 +1,102 @@
+import React, { useState } from "react";
+import { Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
+import MapView, { Polygon } from "react-native-maps";
+
+export default function App() {
+  const [zoneCoords, setZoneCoords] = useState([]);
+  const [drawing, setDrawing] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [description, setDescription] = useState("");
+
+  const handleMapPress = (e) => {
+    if (drawing) {
+      setZoneCoords([...zoneCoords, e.nativeEvent.coordinate]);
+    }
+  };
+
+  const handleSubmitZone = () => {
+    // Here you can send data to backend API
+    console.log("Submitting zone:", { zoneCoords, description });
+    setModalVisible(false);
+    setDrawing(false);
+    setZoneCoords([]);
+    setDescription("");
+  };
+
+  return (
+    <View style={{ flex: 1 }}>
+      <MapView style={{ flex: 1 }} onPress={handleMapPress}>
+        {zoneCoords.length > 0 && (
+          <Polygon
+            coordinates={zoneCoords}
+            strokeColor="red"
+            fillColor="rgba(255,0,0,0.4)"
+            strokeWidth={2}
+          />
+        )}
+      </MapView>
+
+      <View style={styles.buttonContainer}>
+        <Button
+          title={drawing ? "Finish Drawing" : "Add Zone"}
+          onPress={() => {
+            if (drawing && zoneCoords.length > 2) {
+              setModalVisible(true);
+            } else {
+              setDrawing(true);
+              setZoneCoords([]);
+            }
+          }}
+        />
+      </View>
+
+      <Modal visible={modalVisible} animationType="slide" transparent>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalBox}>
+            <Text style={styles.modalTitle}>Zone Details</Text>
+            <TextInput
+              placeholder="Description"
+              style={styles.input}
+              value={description}
+              onChangeText={setDescription}
+            />
+            <Button title="Submit Zone" onPress={handleSubmitZone} />
+          </View>
+        </View>
+      </Modal>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  buttonContainer: {
+    position: "absolute",
+    bottom: 40,
+    left: 20,
+    right: 20,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalBox: {
+    width: 300,
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+    marginBottom: 15,
+    borderRadius: 5,
+  },
+});
