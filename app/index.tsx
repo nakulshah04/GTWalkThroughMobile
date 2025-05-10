@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
 import MapView, { Polygon } from "react-native-maps";
 
-export default function App() {
+export default function HomeScreen() {
   const [zoneCoords, setZoneCoords] = useState([]);
   const [drawing, setDrawing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -15,7 +15,6 @@ export default function App() {
   };
 
   const handleSubmitZone = () => {
-    // Here you can send data to backend API
     console.log("Submitting zone:", { zoneCoords, description });
     setModalVisible(false);
     setDrawing(false);
@@ -25,7 +24,16 @@ export default function App() {
 
   return (
     <View style={{ flex: 1 }}>
-      <MapView style={{ flex: 1 }} onPress={handleMapPress}>
+      <MapView
+        style={{ flex: 1 }}
+        onPress={handleMapPress}
+        initialRegion={{
+          latitude: 33.7756,
+          longitude: -84.3963,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        }}
+      >
         {zoneCoords.length > 0 && (
           <Polygon
             coordinates={zoneCoords}
