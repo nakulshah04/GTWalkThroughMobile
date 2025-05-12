@@ -17,7 +17,7 @@
 ## 🛠️ Tech Stack
 
 - **React Native** (via [Expo](https://expo.dev))
-- **react-native-maps** for interactive map and drawing
+- [**react-native-maps**](https://docs.expo.dev/versions/latest/sdk/map-view/) for interactive map and drawing
 - (Coming Soon) **Django REST API** backend integration
 
 ---

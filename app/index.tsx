@@ -2,12 +2,19 @@ import React, { useState } from "react";
 import { Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
 import MapView, { Polygon } from "react-native-maps";
 
+// Default: gets rendered on the screen
+// Component called HomeScreen
 export default function HomeScreen() {
+  // Holds the list of coordinates
   const [zoneCoords, setZoneCoords] = useState([]);
+  // Boolean for if user is in drawing mode or not
   const [drawing, setDrawing] = useState(false);
+  // Boolean for if the submission form is shown after const zone is drawn
   const [modalVisible, setModalVisible] = useState(false);
+  // Text that the user types into the input field
   const [description, setDescription] = useState("");
 
+  // Callback function for when the user taps on the map
   const handleMapPress = (e) => {
     if (drawing) {
       setZoneCoords([...zoneCoords, e.nativeEvent.coordinate]);
