@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
-import MapView, { Polygon } from "react-native-maps";
+import MapView, { Polygon, PROVIDER_GOOGLE } from "react-native-maps";
 
 // Default: gets rendered on the screen
 // Component called HomeScreen
@@ -33,6 +33,7 @@ export default function HomeScreen() {
     <View style={{ flex: 1 }}>
       <MapView
         style={{ flex: 1 }}
+        provider={PROVIDER_GOOGLE} // Enables Google Maps provider
         onPress={handleMapPress}
         initialRegion={{
           latitude: 33.7756,
