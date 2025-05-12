@@ -37,7 +37,18 @@ cd GTWalkThroughMobile
 npm install
 ```
 
-### 3. Start the App
+### 3. Add Your Google Maps API Keys
+
+Create a .env file in the root folder and add:
+
+```bash
+GOOGLE_MAPS_API_KEY_ANDROID=your-android-api-key
+GOOGLE_MAPS_API_KEY_IOS=your-ios-api-key
+```
+
+📌 These keys must have Maps SDK for Android and iOS enabled in the Google Cloud Console.
+
+### 4. Start the App
 
 ```bash
 npx expo start
