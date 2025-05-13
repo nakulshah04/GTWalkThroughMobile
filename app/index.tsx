@@ -1,6 +1,11 @@
+import { Stack } from "expo-router";
+// Importing React to use JSX
 import React, { useState } from "react";
-import { Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
+// Importing components from react-nartive-maps
 import MapView, { Polygon, PROVIDER_GOOGLE } from "react-native-maps";
+// Importing components from react-native
+// https://reactnative.dev/docs/components-and-apis
+import { Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
 
 // Default: gets rendered on the screen
 // Component called HomeScreen
@@ -30,57 +35,61 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <MapView
-        style={{ flex: 1 }}
-        provider={PROVIDER_GOOGLE} // Enables Google Maps provider
-        onPress={handleMapPress}
-        initialRegion={{
-          latitude: 33.7756,
-          longitude: -84.3963,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        }}
-      >
-        {zoneCoords.length > 0 && (
-          <Polygon
-            coordinates={zoneCoords}
-            strokeColor="red"
-            fillColor="rgba(255,0,0,0.4)"
-            strokeWidth={2}
-          />
-        )}
-      </MapView>
-
-      <View style={styles.buttonContainer}>
-        <Button
-          title={drawing ? "Finish Drawing" : "Add Zone"}
-          onPress={() => {
-            if (drawing && zoneCoords.length > 2) {
-              setModalVisible(true);
-            } else {
-              setDrawing(true);
-              setZoneCoords([]);
-            }
+    <>
+      <Stack.Screen options={{ title: "GT WalkThrough" }} />
+      
+      <View style={{ flex: 1 }}>
+        <MapView
+          style={{ flex: 1 }}
+          provider={PROVIDER_GOOGLE}
+          onPress={handleMapPress}
+          initialRegion={{
+            latitude: 33.7756,
+            longitude: -84.3963,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
           }}
-        />
-      </View>
-
-      <Modal visible={modalVisible} animationType="slide" transparent>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalBox}>
-            <Text style={styles.modalTitle}>Zone Details</Text>
-            <TextInput
-              placeholder="Description"
-              style={styles.input}
-              value={description}
-              onChangeText={setDescription}
+        >
+          {zoneCoords.length > 0 && (
+            <Polygon
+              coordinates={zoneCoords}
+              strokeColor="red"
+              fillColor="rgba(255,0,0,0.4)"
+              strokeWidth={2}
             />
-            <Button title="Submit Zone" onPress={handleSubmitZone} />
-          </View>
+          )}
+        </MapView>
+
+        <View style={styles.buttonContainer}>
+          <Button
+            title={drawing ? "Finish Drawing" : "Add Zone"}
+            onPress={() => {
+              if (drawing && zoneCoords.length > 2) {
+                setModalVisible(true);
+              } else {
+                setDrawing(true);
+                setZoneCoords([]);
+              }
+            }}
+          />
         </View>
-      </Modal>
-    </View>
+
+        <Modal visible={modalVisible} animationType="slide" transparent>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalBox}>
+              <Text style={styles.modalTitle}>Zone Details</Text>
+              <TextInput
+                placeholder="Description"
+                style={styles.input}
+                value={description}
+                onChangeText={setDescription}
+              />
+              <Button title="Submit Zone" onPress={handleSubmitZone} />
+            </View>
+          </View>
+        </Modal>
+      </View>
+    </>
   );
 }
 

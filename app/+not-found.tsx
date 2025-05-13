@@ -1,3 +1,5 @@
+// Catches invalid routes
+// Shows a page not found screen instead of crashing
 import { Link, Stack } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
