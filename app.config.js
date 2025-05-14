@@ -47,6 +47,9 @@ export default {
     ],
     experiments: {
       typedRoutes: true
+    },
+    experimental: {
+      router: true,
     }
   }
 };
