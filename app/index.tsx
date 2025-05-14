@@ -6,6 +6,9 @@ import MapView, { Polygon, PROVIDER_GOOGLE } from "react-native-maps";
 // Importing components from react-native
 // https://reactnative.dev/docs/components-and-apis
 import { Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
+// Importing Firebase-relevant
+import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 
 // Default: gets rendered on the screen
 // Component called HomeScreen
@@ -26,13 +29,24 @@ export default function HomeScreen() {
     }
   };
 
-  const handleSubmitZone = () => {
-    console.log("Submitting zone:", { zoneCoords, description });
+  const handleSubmitZone = async () => {
+    try {
+      await addDoc(collection(db, "constructionZones"), {
+        coordinates: zoneCoords,
+        description,
+        timestamp: Timestamp.now(),
+      });
+      console.log("Zone submitted to Firebase!");
+    } catch (e) {
+      console.error("Error submitting to Firebase:", e);
+    }
+  
     setModalVisible(false);
     setDrawing(false);
     setZoneCoords([]);
     setDescription("");
   };
+  
 
   return (
     <>
