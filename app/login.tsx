@@ -1,5 +1,6 @@
 import AuthInput from '@/components/AuthInput';
 import { auth } from '@/firebaseConfig';
+
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { useState } from 'react';
 import { Alert, Button, Text, View } from 'react-native';

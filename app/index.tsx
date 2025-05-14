@@ -7,7 +7,8 @@ import MapView, { Polygon, PROVIDER_GOOGLE } from "react-native-maps";
 // https://reactnative.dev/docs/components-and-apis
 import { Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
 // Importing Firebase-relevant
-import { db } from "@/firebaseConfig";
+import { db } from '@/firebaseConfig';
+
 import { addDoc, collection, Timestamp } from "firebase/firestore";
 
 // Default: gets rendered on the screen

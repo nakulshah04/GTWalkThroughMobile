@@ -5,6 +5,7 @@ import {
 } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
+// Your config
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -15,16 +16,20 @@ const firebaseConfig = {
   measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
+// Making sure that the app is only initialized once
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-let _auth;
+// Ensuring that auth is only initialized once
+let auth;
 try {
-  _auth = initializeAuth(app, {
+    // Throwing an error is auth is not initialized
+  auth = getAuth(app);
+} catch {
+  auth = initializeAuth(app, {
     persistence: getReactNativePersistence(AsyncStorage),
   });
-} catch {
-  _auth = getAuth(app);
 }
 
-export const auth = _auth;
-export const db = getFirestore(app);
+const db = getFirestore(app);
+
+export { app, auth, db };

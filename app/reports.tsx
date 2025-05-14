@@ -1,4 +1,5 @@
 import { db } from '@/firebaseConfig';
+
 import { collection, getDocs } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
