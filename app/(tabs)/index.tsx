@@ -1,75 +1,141 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { Stack } from "expo-router";
+// Importing React to use JSX
+import React, { useState } from "react";
+// Importing components from react-nartive-maps
+import MapView, { Polygon, PROVIDER_GOOGLE } from "react-native-maps";
+// Importing components from react-native
+// https://reactnative.dev/docs/components-and-apis
+import { Button, Modal, StyleSheet, Text, TextInput, View } from "react-native";
+// Importing Firebase-relevant
+import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { db } from "../../firebaseConfig";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-
+// Default: gets rendered on the screen
+// Component called HomeScreen
 export default function HomeScreen() {
+  // Holds the list of coordinates
+  const [zoneCoords, setZoneCoords] = useState([]);
+  // Boolean for if user is in drawing mode or not
+  const [drawing, setDrawing] = useState(false);
+  // Boolean for if the submission form is shown after const zone is drawn
+  const [modalVisible, setModalVisible] = useState(false);
+  // Text that the user types into the input field
+  const [description, setDescription] = useState("");
+
+  // Callback function for when the user taps on the map
+  const handleMapPress = (e) => {
+    if (drawing) {
+      setZoneCoords([...zoneCoords, e.nativeEvent.coordinate]);
+    }
+  };
+
+  const handleSubmitZone = async () => {
+    try {
+      await addDoc(collection(db, "constructionZones"), {
+        coordinates: zoneCoords,
+        description,
+        timestamp: Timestamp.now(),
+      });
+      console.log("Zone submitted to Firebase!");
+    } catch (e) {
+      console.error("Error submitting to Firebase:", e);
+    }
+  
+    setModalVisible(false);
+    setDrawing(false);
+    setZoneCoords([]);
+    setDescription("");
+  };
+  
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <>
+      <Stack.Screen options={{ title: "GT WalkThrough" }} />
+      
+      <View style={{ flex: 1 }}>
+        <MapView
+          style={{ flex: 1 }}
+          provider={PROVIDER_GOOGLE}
+          onPress={handleMapPress}
+          initialRegion={{
+            latitude: 33.7756,
+            longitude: -84.3963,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          }}
+        >
+          {zoneCoords.length > 0 && (
+            <Polygon
+              coordinates={zoneCoords}
+              strokeColor="red"
+              fillColor="rgba(255,0,0,0.4)"
+              strokeWidth={2}
+            />
+          )}
+        </MapView>
+
+        <View style={styles.buttonContainer}>
+          <Button
+            title={drawing ? "Finish Drawing" : "Add Zone"}
+            onPress={() => {
+              if (drawing && zoneCoords.length > 2) {
+                setModalVisible(true);
+              } else {
+                setDrawing(true);
+                setZoneCoords([]);
+              }
+            }}
+          />
+        </View>
+
+        <Modal visible={modalVisible} animationType="slide" transparent>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalBox}>
+              <Text style={styles.modalTitle}>Zone Details</Text>
+              <TextInput
+                placeholder="Description"
+                style={styles.input}
+                value={description}
+                onChangeText={setDescription}
+              />
+              <Button title="Submit Zone" onPress={handleSubmitZone} />
+            </View>
+          </View>
+        </Modal>
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  buttonContainer: {
+    position: "absolute",
+    bottom: 40,
+    left: 20,
+    right: 20,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  modalBox: {
+    width: 300,
+    padding: 20,
+    backgroundColor: "white",
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+    marginBottom: 15,
+    borderRadius: 5,
   },
 });
